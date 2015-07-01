@@ -1,0 +1,32 @@
+{
+  "config": {
+    "log": "info"
+  },
+  "extractor" : {
+    "jdbc": { "driver": "com.mysql.jdbc.Driver",
+              "url": "jdbc:mysql://localhost/test?useUnicode=yes&characterEncoding=UTF-8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useLocalSessionState=true&cacheServerConfiguration=true&cachePrepStmts=true&maintainTimeStats=false&useUnbufferedIO=false&useReadAheadInput=false",
+              "userName": "root",
+              "userPassword": "",
+              "query": "select * from orders where id between 0 and 1500000" }
+  },
+  "transformers": [
+        {"vertex": { "class": "Order" }},
+        {"edge" : { "class": "OrderedBy", "joinFieldName": "user_id", "lookup": "User.id" }},
+        {"edge": { "class":"InTown", "joinFieldName":"town_id", "lookup":"Town.id"}}
+  ],
+   "loader" : {
+    "orientdb": {
+      "dbURL": "plocal:/opt/orientdb/databases/test",
+      "dbAutoCreate": false,
+      "dbAutoCreateProperties": true,
+      "dbAutoDropIfExists": false,
+      "tx": true,
+      "wal": false,
+      "batchCommit": 5000,
+      "dbType": "graph",
+      "indexes": [
+        {"class":"Order", "fields":["id:integer"], "type":"UNIQUE" }
+      ]
+    }
+  }
+}

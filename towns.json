@@ -1,0 +1,30 @@
+{
+  "config": {
+    "log": "info"
+  },
+  "extractor" : {
+    "jdbc": { "driver": "com.mysql.jdbc.Driver",
+              "url": "jdbc:mysql://localhost/test?useUnicode=yes&characterEncoding=UTF-8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useLocalSessionState=true&cacheServerConfiguration=true&cachePrepStmts=true&maintainTimeStats=false&useUnbufferedIO=false&useReadAheadInput=false",
+              "userName": "root",
+              "userPassword": "",
+              "query": "select * from towns" }
+  },
+  "transformers": [
+        {"vertex": { "class": "Town" }},
+  ],
+   "loader" : {
+    "orientdb": {
+      "dbURL": "plocal:/opt/orientdb/databases/test",
+      "dbAutoCreate": false,
+      "dbAutoCreateProperties": true,
+      "dbAutoDropIfExists": false,
+      "tx": true,
+      "wal": false,
+      "batchCommit": 2000,
+      "dbType": "graph",
+      "indexes": [
+        {"class":"Town", "fields":["id:integer"], "type":"UNIQUE" }
+      ]
+    }
+  }
+}

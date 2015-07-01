@@ -1,0 +1,33 @@
+{
+  "config": {
+    "log": "info"
+  },
+  "extractor" : {
+    "jdbc": { "driver": "com.mysql.jdbc.Driver",
+              "url": "jdbc:mysql://localhost/test?useUnicode=yes&characterEncoding=UTF-8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useLocalSessionState=true&cacheServerConfiguration=true&cachePrepStmts=true&maintainTimeStats=false&useUnbufferedIO=false&useReadAheadInput=false",
+              "userName": "root",
+              "userPassword": "",
+              "query": "select * from product_comments" }
+  },
+  "transformers": [
+     {"vertex": { "class": "ProductComment" }},
+        {"edge": { "class": "CreatedBy", "joinFieldName": "user_id", "lookup": "User.id"}},
+        {"edge": { "class": "HasProduct", "joinFieldName": "product_id", "lookup": "Product.id"}},
+        {"edge": { "class": "AnsweredBy", "joinFieldName":"answered_user_id", "lookup":"User.id"}},
+  ],
+   "loader" : {
+    "orientdb": {
+      "dbURL": "plocal:/opt/orientdb/databases/test",
+      "dbAutoCreate": false,
+      "dbAutoCreateProperties": true,
+      "dbAutoDropIfExists": false,
+      "tx": true,
+      "wal": false,
+      "batchCommit": 5000,
+      "dbType": "graph",
+      "indexes": [
+        {"class":"ProductComment", "fields":["id:integer"], "type":"UNIQUE" }
+      ]
+    }
+  }
+}
